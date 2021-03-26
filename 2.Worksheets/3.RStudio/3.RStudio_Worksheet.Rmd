@@ -1,6 +1,6 @@
 ---
 title: '3\. Worksheet: Basic R'
-author: "Student Name; Z620: Quantitative Biodiversity, Indiana University"
+author: "Ford Fishman; Z620: Quantitative Biodiversity, Indiana University"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: pdf_document
 geometry: margin=2.54cm
@@ -20,7 +20,7 @@ You will not be able to complete the exercises without the corresponding handout
 Space for your answers is provided in this document and is indicated by the ">" character.
 If you need a second paragraph be sure to start the first line with ">".
 You should notice that the answer is highlighted in green by RStudio (color may vary if you changed the editor theme). 
-5. Before you leave the classroom today, it is *imperative* that you **push** this file to your GitHub repo, at whatever stage you are. Ths will enable you to pull your work onto your own computer.
+5. Before you leave the classroom today, it is *imperative* that you **push** this file to your GitHub repo, at whatever stage you are. This will enable you to pull your work onto your own computer.
 6. When you have completed the worksheet, **Knit** the text and code into a single PDF file by pressing the `Knit` button in the RStudio scripting panel.
 This will save the PDF output in your '3.RStudio' folder.
 7. After Knitting, please submit the worksheet by making a **push** to your GitHub repo and then create a **pull request** via GitHub.
@@ -48,8 +48,9 @@ In the R code chunk below, please provide the code to:
 3) set your working directory to your '3.RStudio' folder. 
 
 ```{r}
-
-
+rm(list=ls()) # step 1
+getwd() # step 2
+setwd('~/GitHub/QB2021_Fishman/2.Worksheets/3.RStudio/')
 
 ```
 
@@ -65,7 +66,17 @@ Feel free to reference the **1. Introduction to version control and computing to
 
 ```{r}
 
+# 1 volume of cube
+5^3
 
+# 2 area of circle
+pi*2^2
+
+# 3 side of right triangle
+sin(pi/4)*sqrt(2)
+
+# 4 ln
+log(4)
 
 
 ```
@@ -82,7 +93,14 @@ In the R-code chunk below, do the following:
 3) Add `x` and `w` and divide by 15.
 
 ```{r}
+# 1 vector
+x <- c(1,2,3,4,5)
 
+# 2 scalar multiplication
+w <- x*14
+
+# 3 vector addition
+(x + w)/15
 
 
 ```
@@ -94,6 +112,14 @@ Now, do the following:
 
 ```{r}
 
+# 1 initialize k
+k <- c(6,7,8,9,10)
+
+# 2 vector multiplication
+k*x # assuming you meant element-wise multiplication, and not dot-product (k %*% x)
+
+# 3 combine
+c(sample(w, 3), sample(k, 4)) # not sure if this was what you meant
 
 
 ```
@@ -105,16 +131,23 @@ In the R-code chunk below, calculate the **summary statistics** (i.e., maximum, 
 ```{r}
 v <- c(16.4, 16.0, 10.1, 16.8, 20.5, NA, 20.2, 13.1, 24.8, 20.2, 25.0, 20.5, 30.5, 31.4, 27.1)
 
+w <- na.omit(v) # omit NA in vector
 
+max(w)
 
+min(w)
 
+sum(w)
 
+mean(w)
 
+median(w)
 
+var(w)
 
+sd(w)
 
-
-
+sd(w)/sqrt(length(w)) # omitted NA doesn't count for SE estimate
 
 
 ```
@@ -128,9 +161,13 @@ Make the mean of the first column equal to 8 with a standard deviation of 2 and 
 
 ```{r}
 
-
-
-
+matrix(
+  c(
+    rnorm(5,8,2),
+    rnorm(5,25,10)
+  ),
+  ncol=2, nrow=5
+)
 
 ```
 
@@ -139,7 +176,7 @@ What do the arguments in this function specify?
 Remember to use `help()` or type `?rnorm`.
 
 > Answer 1:
-
+`rnorm` returns a vector of specified length where each value is drawn from a normal distribution of specified mean and standard deviation.
 
 In the R code chunk below, do the following: 
 1) Load `matrix.txt` from the **3.RStudio** data folder as matrix `m`.
@@ -147,8 +184,14 @@ In the R code chunk below, do the following:
 3) Determine the dimensions of the transposed matrix.
 
 ```{r}
+# 1 read table
+m <- read.table('data/matrix.txt')
 
+# 2 transpose
+m.t <- t(m)
 
+# 3 dimensions
+dim(m.t)
 
 ```
 
@@ -156,7 +199,7 @@ In the R code chunk below, do the following:
 ***Question 2***: What are the dimensions of the matrix you just transposed?
 
 > Answer 2:
-
+5 x 10: 5 rows, 10 columns.
 
 ###Indexing a Matrix
 
@@ -165,7 +208,11 @@ In the R code chunk below, do the following:
 2) Remove the last row of matrix `m`.
 
 ```{r}
+# 1 index
+m[,c(1:2,4:5)]
 
+# 2 drop last row
+m[1:(nrow(m)-1),]
 
 ```
 
@@ -177,8 +224,8 @@ In the R code chunk below, do the following:
 2) Display the structure of this data set.
 
 ```{r}
-
-
+meso <- read.table('data/zoop_nuts.txt', header = TRUE)
+str(meso)
 ```
 
 ### Correlation
@@ -189,7 +236,14 @@ In the R-code chunk below, do the following:
 3) Conduct a simple **Pearson's correlation** analysis.
 
 ```{r}
+# 1 numerical matrix
+meso.num <- meso[,3:ncol(meso)]
 
+# 2 biplots
+pairs(meso.num)
+
+# 3 correlation
+cor(meso.num)
 
 ```
 
@@ -197,7 +251,7 @@ In the R-code chunk below, do the following:
 ***Question 3***: Describe some of the general features based on the visualization and correlation analysis above?
 
 > Answer 3:
-
+Most of the features are correlated. The main exception is `CHLA`, which is not correlated with any other feature. `TN` and `TIN` are the most highly correlated. 
 
 In the R code chunk below, do the following:
 1) Redo the correlation analysis using the `corr.test()` function in the `psych` package with the following options: method = "pearson", adjust = "BH".
@@ -205,8 +259,14 @@ In the R code chunk below, do the following:
 3) Use the print command from the handout to see the results of each correlation analysis.
 
 ```{r}
+suppressPackageStartupMessages(library('psych'))
 
+corr.pearson <- corr.test(meso.num, method = 'pearson', adjust = 'BH')
 
+corr.kendall <- corr.test(meso.num, method = 'kendall', adjust = 'BH')
+
+print(corr.pearson, digits=3) 
+print(corr.kendall, digits=3)
 
 ```
 
@@ -218,6 +278,7 @@ With the Pearson's method, is there evidence for false discovery rate due to mul
 Why is false discovery rate important?
 
 > Answer 4: 
+The results appear to somewhat sensitive to which correlation method is used. The non-parametric correlations in general are smaller than the parametric methods, and after p-value correction, the Kendall approach considers several correlations to not be significant that the Pearson approach does. The Pearson approach alone does not suggest false-discovery from multiple testing, but the Kendall method does. The Kendall approach appears to be more conservative and limit false positives. False discovery is important because you might conclude that a trend exists when in reality there is none. 
 
 ### Linear Regression
 
@@ -227,18 +288,35 @@ In the R code chunk below, do the following:
 3) Produce a plot of this regression analysis including the following: categorically labeled points, the predicted regression line with 95% confidence intervals, and the appropriate axis labels.
 
 ```{r}
+# 1 run regression
+lm1 <- lm(data=meso, ZP~TN)
 
+# 2 summary
+summary(lm1)
 
+# 3 plot
+ZP <- meso$ZP; TN <- meso$TN
+x <- seq(min(TN), max(TN),10)
+y <- predict(lm1, newdata = data.frame(TN=x))
+conf <- predict(lm1, newdata = data.frame(TN=x), interval = c("confidence"),level= 0.95, type='response')
 
-
-
+plot(
+  y=ZP, x=TN, 
+  xlab = expression(paste("Total Nitrogen (",mu,"g/L)")), 
+  ylab="Zooplankton Biomass (mg/L)",
+  ylim=c(0,10), xlim=c(500,5000)
+  )
+text(TN, ZP, meso$NUTS, pos=3, cex=0.8)
+lines(x,y)
+matlines(x,conf[,c("lwr","upr")], typ="l", lty=2, col = "black")
 
 
 ```
 
 ***Question 5***: Interpret the results from the regression model
 
-> Answer 5:
+> Answer 5: 
+There is a significant (p < 0.001) positive linear relationship between TN and ZP. The higher the nutrient concentration, the larger the zooplankton biomass. However, within each labeled group, there is a lot of variance. For instance, it is unclear if there is a linear relationship within `M` between the two features.
 
 
 ```{r}
@@ -255,12 +333,30 @@ Using the R code chunk below, do the following:
 
 
 ```{r}
+# 1 reorder treatments
+NUTS <- factor(meso$NUTS, levels = c("L","M","H"))
 
+# 2+3 bar plot
+zp.means <- tapply(meso$ZP, NUTS, mean) # get treatment means
 
+sem <- function(x){ # define sem function
+  v <- na.omit(x)
+  return(sd(v)/sqrt(length(v)))
+}
 
+zp.sem <- tapply(meso$ZP, NUTS, sem) # get sem
 
+# make plot
+bp <- barplot(zp.means, ylim=c(0,8), xlab = "nutrient supply", ylab="zooplankton biomass (mg/L)", names.arg = c("low","medium","high"))
+# add error bars
+arrows(x0=bp, y0=zp.means, y1=zp.means-zp.sem, angle = 90)
+arrows(x0=bp, y0=zp.means, y1=zp.means+zp.sem, angle = 90)
 
+# 4 anova
+anova1 <- aov(ZP ~ NUTS, data = meso) 
+summary(anova1)
 
+TukeyHSD(anova1)
 
 ```
 
@@ -291,12 +387,30 @@ The remaining columns of data refer to the biomass (µg/L) of different zooplank
 ***Question 6***: With the visualization and statistical tools that we learned about in the **3. RStudio** handout, use the site-by-species matrix to assess whether and how different zooplankton taxa were responsible for the total biomass (ZP) response to nutrient enrichment. 
 Describe what you learned below in the "Answer" section and include appropriate code in the R chunk.
 
-```{r}
+```{r fig.align='center'}
+# read in data
+zoo <- read.table("~/GitHub/QB2021_Fishman/2.Worksheets/3.RStudio/data/zoops.txt", header = TRUE)
 
+sbs <- zoo[,3:ncol(zoo)] # make site by species matrix
 
+summary(sbs) # summarize
 
+cor.zoo <- corr.test(sbs, method="kendall",adjust="BH") # run correlation
+
+print(cor.zoo)
+
+for (name in colnames(sbs)){ 
+  means <- tapply(sbs[,name], NUTS, mean)
+  sems <- tapply(sbs[,name], NUTS, sem)
+  
+  bp <- barplot(means, ylim=c(0,round(max(means),digits=0)+max(sems)*1.1), xlab = "nutrient supply", ylab=expression(paste("biomass (",mu,"g/L)")), names.arg = c("low","medium","high"), main=name)
+# add error bars
+  arrows(x0=bp, y0=means, y1=means-sems, angle = 90)
+  arrows(x0=bp, y0=means, y1=means+sems, angle = 90)
+}
 
 ```
+> Answer 6: The biomass of the various taxa appear to be uncorrelated, when uses the Kendall approach with BH p-value correction. The massive increase in biomass with high nutrients is almost entirely driven by high concentrations of SIMO and CHYD. CHYD in particular has biomasses orders of magnitude higher than other taxa. BOSM, NAUP, and DLUM are almost at negligible concentration. CAL, DIAP, CYCL, and BOSM all peak at medium nutrient concentrations, while NAUP and DLUM decrease with increasing nutrients. 
 
 ## SUBMITTING YOUR WORKSHEET
 Use Knitr to create a PDF of your completed **3.RStudio_Worksheet.Rmd** document, push the repo to GitHub, and create a pull request.
