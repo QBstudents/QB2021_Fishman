@@ -387,21 +387,19 @@ The remaining columns of data refer to the biomass (µg/L) of different zooplank
 ***Question 6***: With the visualization and statistical tools that we learned about in the **3. RStudio** handout, use the site-by-species matrix to assess whether and how different zooplankton taxa were responsible for the total biomass (ZP) response to nutrient enrichment. 
 Describe what you learned below in the "Answer" section and include appropriate code in the R chunk.
 
-```{r}
-
+```{r fig.align='center'}
+# read in data
 zoo <- read.table("~/GitHub/QB2021_Fishman/2.Worksheets/3.RStudio/data/zoops.txt", header = TRUE)
 
-sbs <- zoo[,3:ncol(zoo)]
+sbs <- zoo[,3:ncol(zoo)] # make site by species matrix
 
-summary(sbs)
+summary(sbs) # summarize
 
-cor.zoo <- corr.test(sbs, method="kendall",adjust="BH")
+cor.zoo <- corr.test(sbs, method="kendall",adjust="BH") # run correlation
 
 print(cor.zoo)
 
-
-
-for (name in colnames(sbs)){
+for (name in colnames(sbs)){ 
   means <- tapply(sbs[,name], NUTS, mean)
   sems <- tapply(sbs[,name], NUTS, sem)
   
@@ -412,8 +410,7 @@ for (name in colnames(sbs)){
 }
 
 ```
-> Answer 6:
-The biomass of the various taxa appear to be uncorrelated, when uses the Kendall approach with BH p-value correction. The massive increase in biomass with high nutrients is almost entirely driven by high concentrations of SIMO and CHYD. CHYD in particular has biomasses orders of magnitude higher than other taxa. BOSM, NAUP, and DLUM are almost at negligible concentration. CAL, DIAP, CYCL, and BOSM all peak at medium nutrient concentrations, while NAUP and DLUM decrease with increasing nutrients. 
+> Answer 6: The biomass of the various taxa appear to be uncorrelated, when uses the Kendall approach with BH p-value correction. The massive increase in biomass with high nutrients is almost entirely driven by high concentrations of SIMO and CHYD. CHYD in particular has biomasses orders of magnitude higher than other taxa. BOSM, NAUP, and DLUM are almost at negligible concentration. CAL, DIAP, CYCL, and BOSM all peak at medium nutrient concentrations, while NAUP and DLUM decrease with increasing nutrients. 
 
 ## SUBMITTING YOUR WORKSHEET
 Use Knitr to create a PDF of your completed **3.RStudio_Worksheet.Rmd** document, push the repo to GitHub, and create a pull request.
